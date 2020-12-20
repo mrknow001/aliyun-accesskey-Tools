@@ -405,7 +405,7 @@ if  __name__=="__main__":
     ui= Ui_MainWindow()
     ui.setupUi(widget)
     widget.setWindowTitle("Aliyun- AK Tools by Gamma")
-    widget.setWindowIcon(QtGui.QIcon(":/logo.png"))
+    #widget.setWindowIcon(QtGui.QIcon(":/logo.png"))
     widget.show()
     incident_key(ui)
     sys.exit(app.exec_())
