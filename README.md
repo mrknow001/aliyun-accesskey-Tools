@@ -9,4 +9,8 @@
 
 ![image](https://github.com/mrknow001/aliyun-accesskey-Tools/blob/main/images/image2.png)
 
+##安装模块
+
+pip install -r requirements.txt
+
 由于时间关系，没空写了。策略方面还未完成。
