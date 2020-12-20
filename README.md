@@ -16,6 +16,9 @@
 pip install -r requirements.txt
 
 
+pyinstaller打包exe命令
+
+pyinstaller --hidden-import=queue -w -F OSSTools.py
 
 
 由于时间关系，没空写了。策略方面还未完成。
