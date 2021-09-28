@@ -11,6 +11,8 @@
 
 ![image](https://github.com/mrknow001/aliyun-accesskey-Tools/blob/main/images/image2.png)
 
+![image](https://github.com/mrknow001/aliyun-accesskey-Tools/blob/main/images/command_excute.png)
+
 ## 安装模块 ##
 
 pip install -r requirements.txt
