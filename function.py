@@ -24,7 +24,9 @@ def err_message(ui):
     QtWidgets.QMessageBox.critical(ui.pushButton, "警告", 'msg')
 
 def DescribeCloudAssistantStatus(AccessKeyID, AccessKeySecret, ZoneId, InstanceId):
+    #print(AccessKeyID, AccessKeySecret, ZoneId, InstanceId)
     client = AcsClient(AccessKeyID, AccessKeySecret, ZoneId)
+    #client = AcsClient('LTAI4FzRuhWj54NnbKRrWPGW', '0FnQHlxmJ0tJQK3lTsadUU9FBODPWu', 'cn-hangzhou')
 
     request = DescribeCloudAssistantStatusRequest()
     request.set_accept_format('json')
@@ -32,6 +34,8 @@ def DescribeCloudAssistantStatus(AccessKeyID, AccessKeySecret, ZoneId, InstanceI
     request.set_InstanceIds([InstanceId])
 
     response = client.do_action_with_exception(request)
+    # python2:  print(response)
+    #print(str(response, encoding='utf-8'))
     return json.loads(response)
 
 
@@ -52,6 +56,7 @@ def CreateCommand(ui, AccessKeyID, AccessKeySecret, com_type, command, ZoneId, I
         name = ''.join(random.sample(
             ['z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q', 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e',
              'd', 'c', 'b', 'a'], 5))
+        # name = 'test11111'
         try:
             request.set_Name(name)
             request.set_Type(com_type)
@@ -60,6 +65,8 @@ def CreateCommand(ui, AccessKeyID, AccessKeySecret, com_type, command, ZoneId, I
             request.set_CommandContent(command)
 
             response = client.do_action_with_exception(request)
+            # python2:  print(response)
+            # print(str(response, encoding='utf-8'))
             CloudAssistantStatus = DescribeCloudAssistantStatus(AccessKeyID, AccessKeySecret, ZoneId, InstanceId)
             Status = CloudAssistantStatus['InstanceCloudAssistantStatusSet']['InstanceCloudAssistantStatus'][0][
                 'CloudAssistantStatus']
@@ -88,13 +95,18 @@ def InvokeCommand(ui, AccessKeyID, AccessKeySecret, ZoneId, InstanceId, CommandI
         request.set_InstanceIds([InstanceId])
 
         response = client.do_action_with_exception(request)
+        # python2:  print(response)
+        # print(str(response, encoding='utf-8'))
         if json.loads(response)['InvokeId'] == '':
             print('命令执行错误')
             OSSTools.show_message(ui, '命令执行错误')
         else:
             print('命令执行完成')
+            #print(str(response, encoding='utf-8'))
             #OSSTools.show_message(ui, '命令执行完成')
+            #print(json.loads(response)['InvokeId'])
             return json.loads(response)['InvokeId']
+        # return str(response)
     except:
         print('命令执行失败')
         OSSTools.show_message(ui, '命令执行失败')
@@ -108,6 +120,8 @@ def DescribeInvocationResults(AccessKeyID, AccessKeySecret, ZoneId, InvokeID):
     request.set_InvokeId(InvokeID)
 
     response = client.do_action_with_exception(request)
+    # python2:  print(response)
+    #print(str(response, encoding='utf-8'))
     return json.loads(response)
 
 def DescribeSecurityGroupAttribute(ui, AccessKeyID, AccessKeySecret, ZoneId, SecurityGroupId):
@@ -126,6 +140,7 @@ def DescribeSecurityGroupAttribute(ui, AccessKeyID, AccessKeySecret, ZoneId, Sec
         print('请输入正确参数')
         OSSTools.show_message(ui, '请输入正确参数')
         return
+    # python2:  print(response)
     print(str(response, encoding='utf-8'))
 
 
@@ -144,6 +159,7 @@ def DescribeInstances(ui, AccessKeyID, AccessKeySecret):
                  "cn-north-2-gov-1": "华北 2 阿里政务云1", "cn-heyuan": "华南2（河源）"}
     for RegionId in RegionIds:
         client = AcsClient(AccessKeyID, AccessKeySecret, RegionId)
+        # print(RegionId)
 
         try:
             request = DescribeInstancesRequest()
@@ -152,12 +168,14 @@ def DescribeInstances(ui, AccessKeyID, AccessKeySecret):
             request.set_PageSize(100)
 
             response = client.do_action_with_exception(request)
+            #print(json.loads(response))
         except:
-            print('请检查输入Key与Secret值,或重新执行')
+            #print('请检查输入Key与Secret值,或重新执行')
             ui.pushButton.setText('查询')
             ui.pushButton.setEnabled(True)
             return ui, '请检查输入Key与Secret值,或重新执行'
         if json.loads(response)['TotalCount'] == 0:
+            #print(RegionId)
             if RegionId == 'cn-heyuan':
                 ui.pushButton.setText('查询')
                 ui.pushButton.setEnabled(True)
@@ -165,6 +183,9 @@ def DescribeInstances(ui, AccessKeyID, AccessKeySecret):
             else:
 
                 continue
+        # python2:  print(response)
+        # print(str(response, encoding='utf-8'))
+        # item1 = json.loads(response)['Instances']['Instance'][0]['OSName']
         PrivateIps = ''
         PublicIps = ''
 
@@ -180,14 +201,17 @@ def DescribeInstances(ui, AccessKeyID, AccessKeySecret):
 
                 row_cnt = ui.tableWidget.rowCount()  # 读取行
                 ui.tableWidget.insertRow(row_cnt)  # 创建行
-
+                #print(json.loads(response)['Instances']['Instance'][i]['VpcAttributes']['PrivateIpAddress']['IpAddress'])
                 for PrivateIp in json.loads(response)['Instances']['Instance'][i]['VpcAttributes']['PrivateIpAddress']['IpAddress']:
                     PrivateIps = str(PrivateIp) + ';'
+                    # print(PrivateIps)
                 for PublicIp in json.loads(response)['Instances']['Instance'][i]['PublicIpAddress']['IpAddress']:
                     PublicIps = str(PublicIp) + ';'
+                    # print(PrivateIps)
                 for SecurityGroup in json.loads(response)['Instances']['Instance'][i]['SecurityGroupIds'][
                     'SecurityGroupId']:
                     SecurityGroups = str(SecurityGroup) + ';'
+                    # print(PrivateIps)
 
                 InstanceId = QTableWidgetItem(json.loads(response)['Instances']['Instance'][i]['InstanceId'])
                 RegionId = QTableWidgetItem(RegionIds[json.loads(response)['Instances']['Instance'][i]['RegionId']])
@@ -232,6 +256,7 @@ def test(ui):
 
 
 def DescribeSecurityGroupAttribute(ui, AccessKeyID, AccessKeySecret, ZoneId, SecurityGroupId):
+    # print(AccessKeyID, AccessKeySecret, ZoneId, SecurityGroupId)
     client = AcsClient(AccessKeyID, AccessKeySecret, ZoneId)
 
     request = DescribeSecurityGroupAttributeRequest()
@@ -240,6 +265,7 @@ def DescribeSecurityGroupAttribute(ui, AccessKeyID, AccessKeySecret, ZoneId, Sec
     request.set_SecurityGroupId(SecurityGroupId)
 
     response = client.do_action_with_exception(request)
+    # python2:  print(response)
     print(str(response, encoding='utf-8'))
 
 
@@ -265,12 +291,16 @@ def server_check_input(ui):
         #print('请输入AccessKeySecret')
         return ui,'请输入AccessKeySecret'
     else:
+        # RegionIds = {"cn-hangzhou": "华东1（杭州）"}
+
+        #return DescribeInstances(ui, AccessKeyID, AccessKeySecret)
         DescribeInstances(ui, AccessKeyID, AccessKeySecret)
         row_cnt = ui.tableWidget.rowCount()
         for i in range(row_cnt):
             InstanceId = ui.tableWidget.item(i, 0).text()
             ZoneId = ui.tableWidget.item(i, 1).text()
             Status = DescribeCloudAssistantStatus(AccessKeyID, AccessKeySecret, RegionIds[ZoneId], InstanceId)
+            #print(Status)
             yunzhushou = QTableWidgetItem(Status['InstanceCloudAssistantStatusSet']['InstanceCloudAssistantStatus'][0]['CloudAssistantStatus'])
             ui.tableWidget.setItem(i, 8, yunzhushou)
 
@@ -375,6 +405,11 @@ def commad_check_input(ui,uc,echo_id):
             return
 
 
+        # print(a)
+
+        # DescribeInstances(ui,AccessKeyID,AccessKeySecret,'cn-hangzhou')
+
+
 def SecurityGroup_check(ui):
     AccessKeyID = ui.lineEdit.text()
     AccessKeySecret = ui.lineEdit_2.text()
@@ -396,6 +431,7 @@ def SecurityGroup_check(ui):
         item = ui.tableWidget.findItems(SecurityGroupId, Qt.MatchExactly)
         row = item[0].row()
         ZoneId = ui.tableWidget.item(row, 1).text()
+        # SecurityGroup = ui.tableWidget.item(SecurityGroup_row, 7).text()
 
         DescribeSecurityGroupAttribute(ui, AccessKeyID, AccessKeySecret, ZoneId, SecurityGroupId)
 
